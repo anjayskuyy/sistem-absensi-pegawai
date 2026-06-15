@@ -14,8 +14,10 @@ RUN apt-get update && apt-get install -y \
 
 RUN a2enmod rewrite
 
-# Ensure only one MPM module is enabled (php module requires mpm_prefork)
-RUN a2dismod mpm_event mpm_worker 2>/dev/null; a2enmod mpm_prefork
+# Ensure only mpm_prefork is enabled (php module requires it)
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf \
+           /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf \
+    && a2enmod mpm_prefork
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
