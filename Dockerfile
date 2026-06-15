@@ -25,6 +25,16 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
+# Ensure required Laravel directories exist and are writable
+RUN mkdir -p bootstrap/cache \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/testing \
+    storage/framework/views \
+    storage/logs \
+    storage/app/public \
+    && chmod -R 775 bootstrap/cache storage
+
 # Install PHP dependencies
 RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs
 
@@ -40,7 +50,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Expose port (Railway provides $PORT)
 EXPOSE 80
 
-# Startup script: run migrations, cache config, link storage, start apache
+# Startup script
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
