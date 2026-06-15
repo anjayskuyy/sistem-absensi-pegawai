@@ -1,0 +1,15 @@
+[variables]
+COMPOSER_ALLOW_SUPERUSER = "1"
+PHP_VERSION = "8.1"
+
+[phases.setup]
+nixPkgs = ["php81", "php81Extensions.pdo_mysql", "php81Extensions.mbstring", "php81Extensions.gd", "php81Extensions.zip", "php81Extensions.bcmath", "php81Extensions.gmp", "php81Extensions.exif", "php81Extensions.pcntl", "composer"]
+
+[phases.build]
+cmds = [
+    "COMPOSER_ALLOW_SUPERUSER=1 composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs",
+    "php artisan package:discover --ansi || true",
+    "php artisan config:cache || true",
+    "php artisan route:cache || true",
+    "php artisan view:cache || true"
+]

@@ -13,6 +13,7 @@ RUN mkdir -p bootstrap/cache storage/framework/cache storage/framework/sessions 
     storage/framework/testing storage/framework/views storage/logs storage/app/public \
     && chmod -R 775 bootstrap/cache storage
 
+ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
