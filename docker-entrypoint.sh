@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export APACHE_PORT="${PORT:-80}"
-
 if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force || true
 fi
@@ -16,4 +14,5 @@ php artisan migrate --force || true
 
 php artisan storage:link || true
 
-exec apache2-foreground
+PORT_TO_USE="${PORT:-80}"
+exec php artisan serve --host=0.0.0.0 --port="${PORT_TO_USE}"

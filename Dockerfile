@@ -1,4 +1,4 @@
-FROM php:8.1-apache
+FROM php:8.1-cli
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -11,13 +11,6 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libgmp-dev \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip gmp
-
-RUN a2enmod rewrite
-
-# Ensure only mpm_prefork is enabled (php module requires it)
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf \
-           /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf \
-    && a2enmod mpm_prefork
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -35,26 +28,6 @@ RUN mkdir -p bootstrap/cache \
     && chmod -R 775 bootstrap/cache storage
 
 RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs --no-scripts
-
-RUN rm -f /etc/apache2/sites-enabled/000-default.conf
-RUN { \
-    echo '<VirtualHost *:${APACHE_PORT}>'; \
-    echo '    DocumentRoot /var/www/html/public'; \
-    echo '    <Directory /var/www/html/public>'; \
-    echo '        AllowOverride All'; \
-    echo '        Require all granted'; \
-    echo '    </Directory>'; \
-    echo '    ErrorLog ${APACHE_LOG_DIR}/error.log'; \
-    echo '    CustomLog ${APACHE_LOG_DIR}/access.log combined'; \
-    echo '</VirtualHost>'; \
-    } > /etc/apache2/sites-available/000-default.conf
-RUN a2ensite 000-default
-
-ENV APACHE_PORT=80
-RUN echo 'Listen ${APACHE_PORT}' > /etc/apache2/ports.conf
-
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 80
 
