@@ -36,7 +36,7 @@ RUN mkdir -p bootstrap/cache \
     && chmod -R 775 bootstrap/cache storage
 
 # Install PHP dependencies
-RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs
+RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs --no-scripts
 
 # Set Apache document root to /public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
