@@ -1,13 +1,9 @@
 #!/bin/bash
-set -e
 
-if [ -n "$PORT" ]; then
-    sed -i "s/80/${PORT}/g" /etc/apache2/ports.conf
-    sed -i "s/:80/:${PORT}/g" /etc/apache2/sites-available/000-default.conf
-fi
+export APACHE_PORT="${PORT:-80}"
 
 if [ -z "$APP_KEY" ]; then
-    php artisan key:generate --force
+    php artisan key:generate --force || true
 fi
 
 php artisan package:discover --ansi || true
