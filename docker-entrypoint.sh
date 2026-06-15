@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Fix nginx port - Railway inject PORT env variable
+PORT=${PORT:-80}
+sed -i "s/PORT_PLACEHOLDER/$PORT/g" /etc/nginx/nginx.conf
+
 if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force || true
 fi
