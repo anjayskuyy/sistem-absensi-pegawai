@@ -31,13 +31,22 @@ RUN mkdir -p bootstrap/cache \
 
 RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs --no-scripts
 
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+RUN rm -f /etc/apache2/sites-enabled/000-default.conf
+RUN { \
+    echo '<VirtualHost *:${APACHE_PORT}>'; \
+    echo '    DocumentRoot /var/www/html/public'; \
+    echo '    <Directory /var/www/html/public>'; \
+    echo '        AllowOverride All'; \
+    echo '        Require all granted'; \
+    echo '    </Directory>'; \
+    echo '    ErrorLog ${APACHE_LOG_DIR}/error.log'; \
+    echo '    CustomLog ${APACHE_LOG_DIR}/access.log combined'; \
+    echo '</VirtualHost>'; \
+    } > /etc/apache2/sites-available/000-default.conf
+RUN a2ensite 000-default
 
 ENV APACHE_PORT=80
-RUN sed -ri -e 's/Listen 80/Listen ${APACHE_PORT}/g' /etc/apache2/ports.conf \
-    && sed -ri -e 's/:80/:${APACHE_PORT}/g' /etc/apache2/sites-available/000-default.conf
+RUN echo 'Listen ${APACHE_PORT}' > /etc/apache2/ports.conf
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
