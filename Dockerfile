@@ -29,6 +29,9 @@ RUN mkdir -p bootstrap/cache \
 
 RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs --no-scripts
 
+# Suppress deprecation warnings that can crash artisan serve
+RUN echo "error_reporting = E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING" > /usr/local/etc/php/conf.d/error-reporting.ini
+
 EXPOSE 80
 
 COPY docker-entrypoint.sh /usr/local/bin/
