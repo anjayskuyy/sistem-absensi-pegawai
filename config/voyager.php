@@ -141,12 +141,7 @@ return [
                 'route'      => 'voyager.logout',
                 'icon_class' => 'voyager-power',
             ],
-        ],
 
-        'widgets' => [
-            "App\\Widgets\\UserWidget",
-            "App\\Widgets\\DepartmentWidget",
-        ],
 
     ],
 
