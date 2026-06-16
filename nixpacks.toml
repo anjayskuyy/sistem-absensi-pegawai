@@ -10,8 +10,8 @@ cmds = [
     "npm install",
     "npm run prod",
     "COMPOSER_ALLOW_SUPERUSER=1 composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs",
-    "php artisan package:discover --ansi || true",
-    "php artisan config:cache || true",
-    "php artisan route:cache || true",
-    "php artisan view:cache || true"
+    "php artisan package:discover --ansi || true"
 ]
+
+[start]
+cmd = "bash docker-entrypoint.sh"
