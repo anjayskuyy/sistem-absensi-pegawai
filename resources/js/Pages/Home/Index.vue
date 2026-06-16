@@ -23,6 +23,7 @@
     >
       <div v-if="code != null" class="flex flex-col justify-center mt-2">
         <flip-countdown
+          v-if="formattedTime"
           @timeElapsed="refreshPage()"
           :labels="labels"
           :deadline="formattedTime"
@@ -43,6 +44,7 @@
       <div class="flex flex-col" v-else>
         <p class="mb-4 text-center text-muted">Presensi selanjutnya</p>
         <flip-countdown
+          v-if="formattedTime"
           @timeElapsed="refreshPage()"
           :labels="labels"
           :deadline="formattedTime"
@@ -67,6 +69,7 @@
     >
       <p class="text-center text-gray-500">Hari kerja selanjutnya</p>
       <flip-countdown
+        v-if="formattedTime"
         @timeElapsed="refreshPage()"
         :labels="labels"
         :deadline="formattedTime"
@@ -88,7 +91,7 @@ export default {
   props: {
     code: {
       type: Object,
-      default: () => {},
+      default: () => null,
     },
     weekend: {
       type: Boolean,
@@ -96,11 +99,11 @@ export default {
     },
     deadline: {
       type: String,
-      default: () => "",
+      default: () => null,
     },
     holiday: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
   },
   data() {
@@ -118,7 +121,10 @@ export default {
   },
   computed: {
     formattedTime() {
-      return moment(this.deadline).format("YYYY-MM-DD HH:mm:ss");
+      if (!this.deadline) return null;
+      const parsed = moment(this.deadline);
+      if (!parsed.isValid()) return null;
+      return parsed.format("YYYY-MM-DD HH:mm:ss");
     },
   },
   methods: {
