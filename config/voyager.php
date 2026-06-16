@@ -143,10 +143,7 @@ return [
             ],
         ],
 
-        'widgets' => [
-            "App\\Widgets\\UserWidget",
-            "App\\Widgets\\DepartmentWidget",
-        ],
+        
 
     ],
 
